@@ -65,9 +65,11 @@
   :ensure t
   :pin melpa-stable
   :config
-  (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+;;  (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-  (projectile-mode +1))
+  (projectile-mode +1)
+  (setq projectile-project-search-path '("~/src/")))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
