@@ -78,7 +78,7 @@
  '(inhibit-startup-screen t)
  '(package-selected-packages
    (quote
-    (projectile-speedbar sr-speedbar py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))))
+    (intero haskell-mode projectile-speedbar sr-speedbar py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -216,4 +216,17 @@
 
 (use-package projectile-speedbar
   :ensure t
+  )
+
+
+(use-package haskell-mode
+  :ensure t
+  :pin melpa-stable
+  )
+
+
+(use-package intero
+  :ensure t
+  :init
+  (add-hook 'haskell-mode-hook 'intero-mode)
   )
