@@ -4,7 +4,8 @@
 ;;(tooltip-mode    -1)
 (menu-bar-mode   -1)
 (global-linum-mode t)
-
+(column-number-mode 1)
+(setq kill-whole-line t)
 
 ;; Package configs
 (require 'package)
@@ -174,8 +175,9 @@
   )
   (general-define-key
    "M-x" 'helm-M-x
-   "C-x C-f" 'helm-find-files)
+   "C-x C-f" 'helm-find-files
    "C-x r b" 'helm-filtered-bookmarks
+   "M-g M-f" 'first-error
   )
 
 ;;  (global-set-key (kbd "M-x") 
@@ -230,3 +232,37 @@
   :init
   (add-hook 'haskell-mode-hook 'intero-mode)
   )
+
+
+(use-package emamux
+  :ensure t
+  :init
+  (start-process
+   "unused"
+   nil
+   "xterm"
+   "-e" "tmux" "new-session" "-n" "ghci" "-s" "haskell" "cabal repl"
+   )
+  )
+
+(use-package emamux-ghci
+  :config
+  (setq emamux-ghci:tmux-address "haskell:ghci")
+  )
+
+(setq-default indent-tabs-mode nil)
+
+
+(use-package whitespace
+  :ensure t
+  :config
+  (setq whitespace-style '(face lines-tail)
+	whitespace-line-column 80
+	show-trailing-whitespace t
+	indicate-empty-lines t)
+  (global-whitespace-mode t)
+  )
+
+
+
+
