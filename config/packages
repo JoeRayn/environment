@@ -1,0 +1,33 @@
+emacs
+docker
+haskell-platform
+curl
+wget
+zsh
+tmux
+fortune
+fortunes
+chromium-browser
+htop
+jq
+yamllint
+python3-pip
+nmap
+#nmap gui
+zenmap
+bcftools
+samtools
+tig
+smbc #centogene printer
+perl
+parallel
+git-gui
+flatpak
+golang
+ncdu
+gnome-tweak-tool
+cowsay
+ansible
+wireshark
+tree
+graphviz

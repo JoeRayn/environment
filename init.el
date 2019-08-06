@@ -7,6 +7,14 @@
 (column-number-mode 1)
 (setq kill-whole-line t)
 
+;;Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell!
+(setq visible-bell 1)
+
+;; global todo list
+(setq org-agenda-files (list "~/todo.org"))
+
+
+
 ;; Package configs
 (require 'package)
 (setq package-enable-at-startup nil)
@@ -15,7 +23,6 @@
                          ("melpa" . "https://melpa.org/packages/")
 			 ("melpa-stable" . "https://stable.melpa.org/packages/")))
 (package-initialize)
-
 
 
 ;; Bootstrap `use-package`
@@ -29,10 +36,18 @@
 (use-package doom-themes
   :ensure t
   :config
-  (load-theme 'doom-one-light t))
+  (load-theme 'doom-one t))
 
 
-;; Helm
+(use-package snakemake-mode
+  :ensure t)
+
+;; package does not exist?
+;; (use-package bookmark+
+;;   :ensure t)
+
+
+;;Helm
 (use-package helm
   :ensure t
   :init
@@ -41,6 +56,10 @@
   (setq helm-candidate-number-list 50)
   :config
   (helm-mode 1))
+
+
+(use-package ranger
+  :ensure t)
 
 
 ;; Which Key
@@ -66,10 +85,13 @@
   :ensure t
   :pin melpa-stable
   :config
-;;  (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+  ;; (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
   (projectile-mode +1)
-  (setq projectile-project-search-path '("~/src/")))
+  (setq projectile-project-search-path '("~/src/"))
+  )
+
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -79,7 +101,7 @@
  '(inhibit-startup-screen t)
  '(package-selected-packages
    (quote
-    (intero haskell-mode projectile-speedbar sr-speedbar py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))))
+    (emamux intero haskell-mode projectile-speedbar sr-speedbar snakemake-mode dockerfile-mode ein transpose-frame py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -133,7 +155,8 @@
 (use-package flycheck
   :ensure t
   :config
-  (add-hook 'elpy-mode-hook 'flycheck-mode))
+  (add-hook 'elpy-mode-hook 'flycheck-mode)
+  '(elpy-rpc-timeout 30))
 
 
 ;; python ide stuff
@@ -141,26 +164,39 @@
   :ensure t
   :defer t
   :init
+  (defalias 'workon 'pyvenv-workon)
   (advice-add 'python-mode :before 'elpy-enable)
   :config
-  (setq python-shell-interpreter "ipython"
-      python-shell-interpreter-args "-i --simple-prompt")
+  (workon "default")
+  (setq python-shell-interpreter "jupyter"
+      python-shell-interpreter-args "console --simple-prompt"
+      python-shell-prompt-detect-failure-warning nil)
+(add-to-list 'python-shell-completion-native-disabled-interpreters
+             "jupyter")
 )
 
 
-;(use-package ein
-;  :ensure t)
 
-(use-package py-autopep8
-  :ensure t
-  :init
-  (add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save))
+
+(use-package ein
+    :ensure t)
+
+;; (use-package py-autopep8
+;;   :ensure t
+;;   :init
+;;   (add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save))
+
+
+;; frame swapping
+(use-package transpose-frame :ensure t)
 
 
 (defun backward-kill-line (arg)
   "Kill ARG lines backward."
   (interactive "p")
   (kill-line (- 1 arg)))
+
+
 
 
 (use-package general
@@ -171,16 +207,23 @@
   "v" '(flymd-flyit :flymd) 
   "l"  'shrink-window-horizontally
   "k" 'backward-kill-line
-  "h" 'helm-M-x
+  "f" 'elpy-format-code
+  "C-z" 'elpy-shell-switch-to-shell
   )
   (general-define-key
    "M-x" 'helm-M-x
-   "C-x C-f" 'helm-find-files
-   "C-x r b" 'helm-filtered-bookmarks
-   "M-g M-f" 'first-error
+   "C-x C-f" 'helm-find-files)
+  "C-x r b" 'helm-filtered-bookmarks
+  "C-mouse-wheel-up-event" 'text-scale-increase
+  "C-mouse-wheel-down-event" 'text-scale-decrease
+  "M-g M-f" 'first-error
   )
 
 ;;  (global-set-key (kbd "M-x") 
+
+(put 'downcase-region 'disabled nil)
+
+
 
 (use-package sr-speedbar
   :ensure t
@@ -236,22 +279,20 @@
 
 (use-package emamux
   :ensure t
-  :init
-  (start-process
-   "unused"
-   nil
-   "xterm"
-   "-e" "tmux" "new-session" "-n" "ghci" "-s" "haskell" "cabal repl"
-   )
   )
 
-(use-package emamux-ghci
-  :config
-  (setq emamux-ghci:tmux-address "haskell:ghci")
-  )
+;; (use-package emamux-ghci
+;;   :config
+;;   (setq emamux-ghci:tmux-address "haskell:ghci")
+;;   (start-process
+;;    "unused"
+;;    nil
+;;    "xterm"
+;;    "-e" "tmux" "new-session" "-n" "ghci" "-s" "haskell" "cabal repl"
+;;    )
+;;   )
 
 (setq-default indent-tabs-mode nil)
-
 
 (use-package whitespace
   :ensure t
@@ -262,7 +303,5 @@
 	indicate-empty-lines t)
   (global-whitespace-mode t)
   )
-
-
 
 

@@ -1,0 +1,13 @@
+virtualenvwrapper
+pylama
+structlog
+colorama
+rope
+jedi
+importmagic
+autopep8
+flake8
+jupyter
+yapf
+black
+attr
