@@ -86,7 +86,6 @@
   :pin melpa-stable
   :config
   ;; (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
-  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
   (projectile-mode +1)
   (setq projectile-project-search-path '("~/src/"))
   )
@@ -101,7 +100,7 @@
  '(inhibit-startup-screen t)
  '(package-selected-packages
    (quote
-    (helm-swoop emamux intero haskell-mode projectile-speedbar sr-speedbar snakemake-mode dockerfile-mode ein transpose-frame py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))))
+    (indent-tools yaml-mode helm-projectile helm-swoop emamux intero haskell-mode projectile-speedbar sr-speedbar snakemake-mode dockerfile-mode ein transpose-frame py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -156,7 +155,7 @@
   :ensure t
   :config
   (add-hook 'elpy-mode-hook 'flycheck-mode)
-  '(elpy-rpc-timeout 30))
+  )
 
 
 ;; python ide stuff
@@ -171,8 +170,12 @@
   (setq python-shell-interpreter "jupyter"
       python-shell-interpreter-args "console --simple-prompt"
       python-shell-prompt-detect-failure-warning nil)
-(add-to-list 'python-shell-completion-native-disabled-interpreters
+  (add-to-list 'python-shell-completion-native-disabled-interpreters
              "jupyter")
+  (setq elpy-rpc-timeout 100
+        elpy-disable-backend-error-display nil
+        elpy-rpc-error-timeout 30)
+
 )
 
 
@@ -212,11 +215,12 @@
   )
   (general-define-key
    "M-x" 'helm-M-x
-   "C-x C-f" 'helm-find-files)
-  "C-x r b" 'helm-filtered-bookmarks
-  "C-mouse-wheel-up-event" 'text-scale-increase
-  "C-mouse-wheel-down-event" 'text-scale-decrease
-  "M-g M-f" 'first-error
+   "C-x C-f" 'helm-find-files
+   "C-x r b" 'helm-filtered-bookmarks
+   "C-c +" 'text-scale-increase
+   "C-c -" 'text-scale-decrease
+   "M-g M-f" 'first-error
+   )
   )
 
 ;;  (global-set-key (kbd "M-x") 
@@ -243,9 +247,16 @@
   ;; (windmove-default-keybindings))
   :config
   ;; use command key on Mac
-  (windmove-default-keybindings 'control)
+  ;;(windmove-default-keybindings 'control)
   ;; wrap around at edges
-  (setq windmove-wrap-around t))
+  (setq windmove-wrap-around t)
+  (general-define-key
+   "<left>" 'windmove-left
+   "<right>" 'windmove-right
+   "<up>" 'windmove-up
+   "<down>" 'windmove-down
+   )
+  )
 
 ;; Make windmove work in Org mode:
 (use-package org
@@ -308,3 +319,44 @@
 (use-package helm-swoop
   :ensure t
   )
+
+(use-package helm-projectile
+  :ensure t
+  :pin melpa-stable
+  :config
+    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+
+  )
+
+(use-package yaml-mode
+ :ensure t)
+
+
+(use-package indent-tools
+  :ensure t
+  :config
+  (add-hook 'python-mode-hook
+ (lambda () (define-key python-mode-map (kbd "C-c >") 'indent-tools-hydra/body))
+))
+
+(use-package hydra
+  :ensure t
+  :config 
+  (defhydra hydra-zoom (global-map "<f2>")
+  "zoom"
+  ("g" text-scale-increase "in")
+  ("l" text-scale-decrease "out")
+  )
+  )
+
+
+  
+(use-package sql
+  :ensure t
+  :config
+  (add-hook 'sql-interactive-mode-hook
+          (lambda ()
+            (toggle-truncate-lines t)))
+  (load-file "./.emacs.d/database_setup.el")
+  )
+
