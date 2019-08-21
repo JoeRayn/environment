@@ -6,6 +6,8 @@
 (global-linum-mode t)
 (column-number-mode 1)
 (setq kill-whole-line t)
+(global-hl-line-mode +1)
+
 
 ;;Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell!
 (setq visible-bell 1)
@@ -58,8 +60,8 @@
   (helm-mode 1))
 
 
-(use-package ranger
-  :ensure t)
+;; (use-package ranger
+;;   :ensure t)
 
 
 ;; Which Key
@@ -215,6 +217,7 @@
   )
   (general-define-key
    "M-x" 'helm-M-x
+   "C-x b" '(helm-buffers-list :which-key "buffers list")
    "C-x C-f" 'helm-find-files
    "C-x r b" 'helm-filtered-bookmarks
    "C-c +" 'text-scale-increase
@@ -263,6 +266,7 @@
   :ensure t
   :config
   (setq org-replace-disputed-keys t)
+  (setq org-log-done 'time)
   )
 ;; (add-hook 'org-shiftup-final-hook 'windmove-up)
 ;; (add-hook 'org-shiftleft-final-hook 'windmove-left)
@@ -357,6 +361,7 @@
   (add-hook 'sql-interactive-mode-hook
           (lambda ()
             (toggle-truncate-lines t)))
-  (load-file "./.emacs.d/database_setup.el")
   )
 
+(load "~/.emacs.d/database_setup.el")
+(put 'scroll-left 'disabled nil)

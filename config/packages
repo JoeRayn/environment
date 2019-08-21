@@ -32,3 +32,7 @@ wireshark
 tree
 graphviz
 silversearcher-ag
+
+# install htslib
+libbz2-dev
+liblzma-dev
