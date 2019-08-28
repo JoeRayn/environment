@@ -1,13 +1,14 @@
 ;; Minimal UI
 ;;(scroll-bar-mode -1)
 (tool-bar-mode   -1)
-;;(tooltip-mode    -1)
+(setq-default fill-column 80)
+(tooltip-mode    -1)
 (menu-bar-mode   -1)
 (global-linum-mode t)
 (column-number-mode 1)
 (setq kill-whole-line t)
 (global-hl-line-mode +1)
-
+(setq-default indent-tabs-mode nil)
 
 ;;Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell!
 (setq visible-bell 1)
@@ -102,7 +103,7 @@
  '(inhibit-startup-screen t)
  '(package-selected-packages
    (quote
-    (indent-tools yaml-mode helm-projectile helm-swoop emamux intero haskell-mode projectile-speedbar sr-speedbar snakemake-mode dockerfile-mode ein transpose-frame py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))))
+    (emamux-ghci- emamux-ghci ghc yaml-mode helm-projectile general hydra indent-tools helm-swoop emamux intero haskell-mode projectile-speedbar sr-speedbar snakemake-mode dockerfile-mode ein transpose-frame py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -291,23 +292,33 @@
   (add-hook 'haskell-mode-hook 'intero-mode)
   )
 
-
-(use-package emamux
+(use-package ghc
   :ensure t
+  ;; :config
+  ;; (autoload 'ghc-init "ghc" nil t)
+  ;; (autoload 'ghc-debug "ghc" nil t)
+  ;; (add-hook 'haskell-mode-hook (lambda () (ghc-init)))
   )
 
-;; (use-package emamux-ghci
-;;   :config
-;;   (setq emamux-ghci:tmux-address "haskell:ghci")
-;;   (start-process
-;;    "unused"
-;;    nil
-;;    "xterm"
-;;    "-e" "tmux" "new-session" "-n" "ghci" "-s" "haskell" "cabal repl"
-;;    )
-;;   )
 
-(setq-default indent-tabs-mode nil)
+ (use-package emamux
+   :ensure t
+   )
+
+
+(start-process
+   "unused"
+   nil
+   "xterm"
+   "-e" "tmux" "new-session" "-n" "ghci" "-s" "haskell" "cabal repl"
+   )
+(setq emamux-ghci:tmux-address "haskell:ghci")
+
+;; not in package library
+;; (use-package emamux-ghci
+;;   :ensure t
+;;    )
+
 
 (use-package whitespace
   :ensure t
