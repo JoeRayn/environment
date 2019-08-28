@@ -36,3 +36,7 @@ silversearcher-ag
 # install htslib
 libbz2-dev
 liblzma-dev
+
+# newmakestable perl and other requierment
+libfile-slurp-perl
+wkhtmltopdf
