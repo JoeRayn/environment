@@ -103,7 +103,7 @@
  '(inhibit-startup-screen t)
  '(package-selected-packages
    (quote
-    (emamux-ghci- emamux-ghci ghc yaml-mode helm-projectile general hydra indent-tools helm-swoop emamux intero haskell-mode projectile-speedbar sr-speedbar snakemake-mode dockerfile-mode ein transpose-frame py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))))
+    (magit emamux-ghci- emamux-ghci ghc yaml-mode helm-projectile general hydra indent-tools helm-swoop emamux intero haskell-mode projectile-speedbar sr-speedbar snakemake-mode dockerfile-mode ein transpose-frame py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -286,11 +286,11 @@
   )
 
 
-(use-package intero
-  :ensure t
-  :init
-  (add-hook 'haskell-mode-hook 'intero-mode)
-  )
+;; (use-package intero
+;;   :ensure t
+;;   :init
+;;   (add-hook 'haskell-mode-hook 'intero-mode)
+;;   )
 
 (use-package ghc
   :ensure t
@@ -376,3 +376,9 @@
 
 (load "~/.emacs.d/database_setup.el")
 (put 'scroll-left 'disabled nil)
+
+
+(use-package magit
+  :ensure t
+  :pin melpa-stable
+  )
