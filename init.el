@@ -103,7 +103,7 @@
  '(inhibit-startup-screen t)
  '(package-selected-packages
    (quote
-    (magit emamux-ghci- emamux-ghci ghc yaml-mode helm-projectile general hydra indent-tools helm-swoop emamux intero haskell-mode projectile-speedbar sr-speedbar snakemake-mode dockerfile-mode ein transpose-frame py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))))
+    (ox-reveal helm-ag emamux-ghci- emamux-ghci ghc yaml-mode helm-projectile general hydra indent-tools helm-swoop emamux intero haskell-mode projectile-speedbar sr-speedbar snakemake-mode dockerfile-mode ein transpose-frame py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -237,7 +237,7 @@
   :ensure t
   :config
   (setq
-   sr-speedbar-width 20
+   sr-speedbar-width 10
    speedbar-use-images nil)
   (when window-system
     (sr-speedbar-open))
@@ -274,6 +274,12 @@
 ;; (add-hook 'org-shiftdown-final-hook 'windmove-down)
 ;; (add-hook 'org-shiftright-final-hook 'windmove-right)
 
+(use-package org-bullets
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+  )
+
 
 (use-package projectile-speedbar
   :ensure t
@@ -286,11 +292,11 @@
   )
 
 
-;; (use-package intero
-;;   :ensure t
-;;   :init
-;;   (add-hook 'haskell-mode-hook 'intero-mode)
-;;   )
+(use-package intero
+  :ensure t
+  :init
+  (add-hook 'haskell-mode-hook 'intero-mode)
+  )
 
 (use-package ghc
   :ensure t
@@ -309,7 +315,7 @@
 (start-process
    "unused"
    nil
-   "xterm"
+   "gnome-terminal"
    "-e" "tmux" "new-session" "-n" "ghci" "-s" "haskell" "cabal repl"
    )
 (setq emamux-ghci:tmux-address "haskell:ghci")
@@ -352,7 +358,11 @@
   :config
   (add-hook 'python-mode-hook
  (lambda () (define-key python-mode-map (kbd "C-c >") 'indent-tools-hydra/body))
-))
+ )
+  (add-hook 'yaml-mode-hook
+ (lambda () (define-key python-mode-map (kbd "C-c >") 'indent-tools-hydra/body))
+)
+  )
 
 (use-package hydra
   :ensure t
@@ -382,3 +392,15 @@
   :ensure t
   :pin melpa-stable
   )
+
+
+(use-package helm-ag
+  :ensure t
+  )
+
+(defun sqlparse-region (beg end)
+  (interactive "r")
+  (shell-command-on-region
+   beg end
+   "python -c 'import sys, sqlparse; print(sqlparse.format(sys.stdin.read(), reindent=True))'"
+   t t))

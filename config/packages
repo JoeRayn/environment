@@ -39,4 +39,4 @@ liblzma-dev
 
 # newmakestable perl and other requierment
 libfile-slurp-perl
-wkhtmltopdf
+wkhtmltopdfgit-annex
