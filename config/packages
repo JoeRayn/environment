@@ -1,3 +1,5 @@
+nfs-kernel-server
+cifs-utils
 emacs
 docker
 haskell-platform
@@ -18,7 +20,10 @@ zenmap
 bcftools
 samtools
 tig
-smbc #centogene printer
+
+#centogene printer
+smbc
+
 perl
 parallel
 git-gui
@@ -32,11 +37,13 @@ wireshark
 tree
 graphviz
 silversearcher-ag
-
 # install htslib
 libbz2-dev
 liblzma-dev
 
 # newmakestable perl and other requierment
 libfile-slurp-perl
-wkhtmltopdfgit-annex
+wkhtmltopdf
+git-annex
+
+python-dev
