@@ -45,6 +45,9 @@
 (use-package snakemake-mode
   :ensure t)
 
+(use-package elm-mode
+  :ensure t)
+
 ;; package does not exist?
 ;; (use-package bookmark+
 ;;   :ensure t)
@@ -103,7 +106,7 @@
  '(inhibit-startup-screen t)
  '(package-selected-packages
    (quote
-    (helm-dash dash-docs magit ox-reveal helm-ag emamux-ghci- emamux-ghci ghc yaml-mode helm-projectile general hydra indent-tools helm-swoop emamux intero haskell-mode projectile-speedbar sr-speedbar snakemake-mode dockerfile-mode ein transpose-frame py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))))
+    (elm-mode helm-dash dash-docs magit ox-reveal helm-ag emamux-ghci- emamux-ghci ghc yaml-mode helm-projectile general hydra indent-tools helm-swoop emamux intero haskell-mode projectile-speedbar sr-speedbar snakemake-mode dockerfile-mode ein transpose-frame py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -161,6 +164,7 @@
   )
 
 
+
 ;; python ide stuff
 (use-package elpy
   :ensure t
@@ -180,6 +184,8 @@
         elpy-rpc-error-timeout 30)
 
 )
+
+(setq elpy-rpc-python-command "python3")
 
 
 
@@ -315,7 +321,7 @@
 (start-process
    "unused"
    nil
-   "gnome-terminal"
+   "xterm"
    "-e" "tmux" "new-session" "-n" "ghci" "-s" "haskell" "cabal repl"
    )
 (setq emamux-ghci:tmux-address "haskell:ghci")
@@ -330,7 +336,7 @@
   :ensure t
   :config
   (setq whitespace-style '(face lines-tail)
-	whitespace-line-column 80
+	whitespace-line-column 800
 	show-trailing-whitespace t
 	indicate-empty-lines t)
   (global-whitespace-mode t)
@@ -366,13 +372,66 @@
 
 (use-package hydra
   :ensure t
-  :config 
+  :config
   (defhydra hydra-zoom (global-map "<f2>")
   "zoom"
   ("g" text-scale-increase "in")
   ("l" text-scale-decrease "out")
   )
   )
+
+(setq hydra-examples-verbatim t)
+;;** Example 2: move window splitter
+(when (bound-and-true-p hydra-examples-verbatim)
+  (defhydra hydra-splitter (global-map "C-M-;")
+    "splitter"
+    ("h" hydra-move-splitter-left)
+    ("j" hydra-move-splitter-down)
+    ("k" hydra-move-splitter-up)
+    ("l" hydra-move-splitter-right)))
+
+;;** Example 3: jump to error
+(when (bound-and-true-p hydra-examples-verbatim)
+  (defhydra hydra-error (global-map "M-g")
+    "goto-error"
+    ("h" first-error "first")
+    ("j" next-error "next")
+    ("k" previous-error "prev")
+    ("v" recenter-top-bottom "recenter")
+    ("q" nil "quit")))
+
+
+(defun hydra-move-splitter-left (arg)
+  "Move window splitter left."
+  (interactive "p")
+  (if (let ((windmove-wrap-around))
+        (windmove-find-other-window 'right))
+      (shrink-window-horizontally arg)
+    (enlarge-window-horizontally arg)))
+
+(defun hydra-move-splitter-right (arg)
+  "Move window splitter right."
+  (interactive "p")
+  (if (let ((windmove-wrap-around))
+        (windmove-find-other-window 'right))
+      (enlarge-window-horizontally arg)
+    (shrink-window-horizontally arg)))
+
+(defun hydra-move-splitter-up (arg)
+  "Move window splitter up."
+  (interactive "p")
+  (if (let ((windmove-wrap-around))
+        (windmove-find-other-window 'up))
+      (enlarge-window arg)
+    (shrink-window arg)))
+
+(defun hydra-move-splitter-down (arg)
+  "Move window splitter down."
+  (interactive "p")
+  (if (let ((windmove-wrap-around))
+        (windmove-find-other-window 'up))
+      (shrink-window arg)
+    (enlarge-window arg)))
 
 
   
