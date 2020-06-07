@@ -45,12 +45,31 @@
 (use-package snakemake-mode
   :ensure t)
 
+(use-package google-this)
+  :ensure t)
+
 (use-package elm-mode
   :ensure t)
+
+(use-package multi-term
+  :ensure t
+  :init
+  (setq multi-term-program "/usr/bin/zsh"))
 
 ;; package does not exist?
 ;; (use-package bookmark+
 ;;   :ensure t)
+
+(use-package lsp-mode
+  :ensure t)
+(use-package lsp-ui
+  :ensure t)
+(use-package lsp-haskell
+  :ensure t
+  :config
+  (add-hook 'haskell-mode-hook #'lsp)
+  )
+
 
 
 ;;Helm
@@ -106,7 +125,7 @@
  '(inhibit-startup-screen t)
  '(package-selected-packages
    (quote
-    (elm-mode helm-dash dash-docs magit ox-reveal helm-ag emamux-ghci- emamux-ghci ghc yaml-mode helm-projectile general hydra indent-tools helm-swoop emamux intero haskell-mode projectile-speedbar sr-speedbar snakemake-mode dockerfile-mode ein transpose-frame py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))))
+    (lsp-docker lsp-haskell lsp-ui lsp-mode multi-term elm-mode helm-dash dash-docs magit ox-reveal helm-ag emamux-ghci- emamux-ghci ghc yaml-mode helm-projectile general hydra indent-tools helm-swoop emamux haskell-mode projectile-speedbar sr-speedbar snakemake-mode dockerfile-mode ein transpose-frame py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -299,11 +318,6 @@
   )
 
 
-(use-package intero
-  :ensure t
-  :init
-  (add-hook 'haskell-mode-hook 'intero-mode)
-  )
 
 (use-package ghc
   :ensure t
@@ -319,13 +333,13 @@
    )
 
 
-(start-process
-   "unused"
-   nil
-   "xterm"
-   "-e" "tmux" "new-session" "-n" "ghci" "-s" "haskell" "cabal repl"
-   )
-(setq emamux-ghci:tmux-address "haskell:ghci")
+;; (start-process
+;;    "unused"
+;;    nil
+;;    "xterm"
+;;    "-e" "tmux" "new-session" "-n" "ghci" "-s" "haskell" "cabal repl"
+;;    )
+;; (setq emamux-ghci:tmux-address "haskell:ghci")
 
 ;; not in package library
 ;; (use-package emamux-ghci
