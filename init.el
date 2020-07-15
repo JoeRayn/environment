@@ -9,6 +9,8 @@
 (setq kill-whole-line t)
 (global-hl-line-mode +1)
 (setq-default indent-tabs-mode nil)
+(horizontal-scroll-bar-mode t)
+
 
 ;;Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell!
 (setq visible-bell 1)
@@ -362,6 +364,24 @@
   :ensure t
   )
 
+
+(use-package helm-sql-connect
+  :ensure t)
+
+;; (use-package sql-completion
+;;   :ensure t
+;;   :config
+;;   (setq sql-interactive-mode-hook
+;;          (lambda ()
+;;            (define-key sql-interactive-mode-map "\t" 'comint-dynamic-complete)
+;;            (sql-mysql-completion-init)))
+;;   )
+
+
+
+(use-package dockerfile-mode
+  :ensure t)
+
 (use-package helm-projectile
   :ensure t
   :pin melpa-stable
@@ -479,6 +499,6 @@
    "python -c 'import sys, sqlparse; print(sqlparse.format(sys.stdin.read(), reindent=True))'"
    t t))
 
-
 (add-hook 'dired-load-hook
             (function (lambda () (load "dired-x"))))
+(put 'upcase-region 'disabled nil)
