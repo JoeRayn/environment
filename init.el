@@ -47,7 +47,7 @@
 (use-package snakemake-mode
   :ensure t)
 
-(use-package google-this)
+(use-package google-this
   :ensure t)
 
 (use-package elm-mode
@@ -252,6 +252,7 @@
    "C-c +" 'text-scale-increase
    "C-c -" 'text-scale-decrease
    "M-g M-f" 'first-error
+   "M-\"" 'insert-pair
    )
   )
 
