@@ -258,6 +258,7 @@
    "C-c +" 'text-scale-increase
    "C-c -" 'text-scale-decrease
    "M-g M-f" 'first-error
+   "M-\"" 'insert-pair
    )
   )
 
