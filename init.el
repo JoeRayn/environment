@@ -36,18 +36,16 @@
   (package-install 'use-package))
 (require 'use-package)
 
-
 ;; Theme
 (use-package doom-themes
   :ensure t
   :config
   (load-theme 'doom-one t))
 
-
 (use-package snakemake-mode
   :ensure t)
 
-(use-package google-this)
+(use-package google-this
   :ensure t)
 
 (use-package elm-mode
@@ -70,9 +68,13 @@
   :ensure t
   :config
   (add-hook 'haskell-mode-hook #'lsp)
+  (add-hook 'haskell-literate-mode-hook #'lsp)
   )
+;;(use-package helm-lsp
+;;  :ensure t)
 
-
+(use-package flymake
+  :ensure t)
 
 ;;Helm
 (use-package helm
@@ -104,6 +106,9 @@
   :ensure t)
 
 
+(use-package multiple-cursors
+    :pin melpa-stable
+)
 
 
 
@@ -127,7 +132,7 @@
  '(inhibit-startup-screen t)
  '(package-selected-packages
    (quote
-    (lsp-docker lsp-haskell lsp-ui lsp-mode multi-term elm-mode helm-dash dash-docs magit ox-reveal helm-ag emamux-ghci- emamux-ghci ghc yaml-mode helm-projectile general hydra indent-tools helm-swoop emamux haskell-mode projectile-speedbar sr-speedbar snakemake-mode dockerfile-mode ein transpose-frame py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))))
+    (multiple-cursors helm-lsp helm-sql-connect lsp-docker lsp-haskell lsp-ui lsp-mode multi-term elm-mode helm-dash dash-docs magit ox-reveal helm-ag emamux-ghci- emamux-ghci ghc yaml-mode helm-projectile general hydra indent-tools helm-swoop emamux haskell-mode projectile-speedbar sr-speedbar snakemake-mode dockerfile-mode ein transpose-frame py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -243,6 +248,7 @@
   "k" 'backward-kill-line
   "f" 'elpy-format-code
   "C-z" 'elpy-shell-switch-to-shell
+  "c" 'mc/edit-lines
   )
   (general-define-key
    "M-x" 'helm-M-x
@@ -469,7 +475,7 @@
     (enlarge-window arg)))
 
 
-  
+
 (use-package sql
   :ensure t
   :config
@@ -502,3 +508,10 @@
 (add-hook 'dired-load-hook
             (function (lambda () (load "dired-x"))))
 (put 'upcase-region 'disabled nil)
+
+
+(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+
+(fset 'yes-or-no-p 'y-or-n-p)
+
+(find-file "~/todo.org")
