@@ -10,7 +10,7 @@
 (global-hl-line-mode +1)
 (setq-default indent-tabs-mode nil)
 (horizontal-scroll-bar-mode t)
-
+(savehist-mode 1)
 
 ;;Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell!
 (setq visible-bell 1)
@@ -30,17 +30,51 @@
 (package-initialize)
 
 
+
+
 ;; Bootstrap `use-package`
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
 (require 'use-package)
 
+
+(use-package evil
+  :ensure t
+  :pin melpa
+  :init
+  (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
+  (setq evil-want-keybinding nil)
+  :config
+  (evil-mode 1))
+
+(use-package evil-collection
+  :ensure t
+  :after evil
+  :pin melpa-stable
+  :custom (evil-collection-setup-minibuffer t)
+  :config
+  (evil-collection-init))
+
+
+(use-package key-chord
+  :ensure t
+  :config
+  (key-chord-mode 1)
+  (key-chord-define evil-insert-state-map  "jk" 'evil-normal-state)
+  )
+
+
 ;; Theme
 (use-package doom-themes
   :ensure t
   :config
   (load-theme 'doom-one t))
+
+(use-package  session
+  :ensure t
+  :config
+  (add-hook 'after-init-hook 'session-initialize))
 
 (use-package snakemake-mode
   :ensure t)
@@ -61,9 +95,24 @@
 ;;   :ensure t)
 
 (use-package lsp-mode
-  :ensure t)
+  :ensure t
+  :config
+  (lsp-register-client
+    (make-lsp-client :new-connection (lsp-tramp-connection "haskell-language-server-wrapper")
+                     :major-modes '(haskell-mode)
+                     :remote? t
+                     :server-id 'haskell-language-server)))
 (use-package lsp-ui
   :ensure t)
+
+(use-package lsp-treemacs
+  :ensure t)
+
+(use-package helm-lsp
+  :ensure t)
+
+
+
 (use-package lsp-haskell
   :ensure t
   :config
@@ -107,10 +156,13 @@
 
 
 (use-package multiple-cursors
-    :pin melpa-stable
+  :ensure t
+  :pin melpa-stable
 )
 
-
+(use-package company
+  :ensure t
+)
 
 ;; projectile, some kind of project system ( looks at git directories)
 (use-package projectile
@@ -129,10 +181,11 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(helm-minibuffer-history-key "M-p")
  '(inhibit-startup-screen t)
  '(package-selected-packages
-   (quote
-    (multiple-cursors helm-lsp helm-sql-connect lsp-docker lsp-haskell lsp-ui lsp-mode multi-term elm-mode helm-dash dash-docs magit ox-reveal helm-ag emamux-ghci- emamux-ghci ghc yaml-mode helm-projectile general hydra indent-tools helm-swoop emamux haskell-mode projectile-speedbar sr-speedbar snakemake-mode dockerfile-mode ein transpose-frame py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))))
+   '(evil-mc malyon helm-company multiple-cursors helm-lsp helm-sql-connect lsp-docker lsp-haskell lsp-ui lsp-mode multi-term elm-mode helm-dash dash-docs magit ox-reveal helm-ag emamux-ghci- emamux-ghci ghc yaml-mode helm-projectile general hydra indent-tools helm-swoop emamux haskell-mode projectile-speedbar sr-speedbar snakemake-mode dockerfile-mode ein transpose-frame py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))
+ '(session-use-package t nil (session)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -170,8 +223,9 @@
 
 
 (load-library "hideshow")
-(global-set-key (kbd "C-+") 'toggle-hiding)
-(global-set-key (kbd "C-\\") 'toggle-selective-display)
+;; disabled for learning evil mode
+;;(global-set-key (kbd "C-+") 'toggle-hiding)
+;;(global-set-key (kbd "C-\\") 'toggle-selective-display)
 
 (add-hook 'c-mode-common-hook   'hs-minor-mode)
 (add-hook 'emacs-lisp-mode-hook 'hs-minor-mode)
@@ -192,23 +246,25 @@
 
 
 
+
 ;; python ide stuff
 (use-package elpy
   :ensure t
   :defer t
   :init
-  (defalias 'workon 'pyvenv-workon)
   (advice-add 'python-mode :before 'elpy-enable)
-  :config
-  (workon "default")
-  (setq python-shell-interpreter "jupyter"
-      python-shell-interpreter-args "console --simple-prompt"
-      python-shell-prompt-detect-failure-warning nil)
-  (add-to-list 'python-shell-completion-native-disabled-interpreters
-             "jupyter")
-  (setq elpy-rpc-timeout 100
-        elpy-disable-backend-error-display nil
-        elpy-rpc-error-timeout 30)
+  (elpy-enable)
+  ;; (defalias 'workon 'pyvenv-workon)
+;;  :config
+  ;; (workon "default")
+  ;; (setq python-shell-interpreter "jupyter"
+  ;;     python-shell-interpreter-args "console --simple-prompt"
+  ;;     python-shell-prompt-detect-failure-warning nil)
+  ;; (add-to-list 'python-shell-completion-native-disabled-interpreters
+  ;;            "jupyter")
+  ;; (setq elpy-rpc-timeout 100
+  ;;       elpy-disable-backend-error-display nil
+  ;;       elpy-rpc-error-timeout 30)
 
 )
 
@@ -240,26 +296,32 @@
 
 (use-package general
   :ensure t
-  :config (general-define-key
-  :prefix "C-c"
-  "b"  '(helm-buffers-list :which-key "buffers list")
-  "v" '(flymd-flyit :flymd) 
-  "l"  'shrink-window-horizontally
-  "k" 'backward-kill-line
-  "f" 'elpy-format-code
-  "C-z" 'elpy-shell-switch-to-shell
-  "c" 'mc/edit-lines
-  )
+  ;; disabled for leaning evil mode
+  :config
+  ;; (general-define-key
+  ;; :prefix "C-c"
+  ;; "b"  '(helm-buffers-list :which-key "buffers list")
+  ;; "v" '(flymd-flyit :flymd) 
+  ;; "l"  'shrink-window-horizontally
+  ;; "k" 'backward-kill-line
+  ;; "f" 'elpy-format-code
+  ;; "C-z" 'elpy-shell-switch-to-shell
+  ;; "c" 'mc/edit-lines
+  ;;)
   (general-define-key
-   "M-x" 'helm-M-x
-   "C-x b" '(helm-buffers-list :which-key "buffers list")
-   "C-x C-f" 'helm-find-files
-   "C-x r b" 'helm-filtered-bookmarks
-   "C-c +" 'text-scale-increase
-   "C-c -" 'text-scale-decrease
-   "M-g M-f" 'first-error
-   "M-\"" 'insert-pair
-   )
+  "M-x" 'helm-M-x
+  "C-x b" '(helm-buffers-list :which-key "buffers list")
+  "C-x C-f" 'helm-find-files
+  "C-x r b" 'helm-filtered-bookmarks
+  "<f8>" 'tab-next
+  "<f9>" 'other-window
+  "<f12>" 'save-buffer
+  ;;  "C-c +" 'text-scale-increase
+  ;;  "C-c -" 'text-scale-decrease
+  ;;  "M-g M-f" 'first-error
+  ;;  "M-\"" 'insert-pair
+  ;;  "<f12>" 'flyspell-auto-correct-previous-word
+  )
   )
 
 ;;  (global-set-key (kbd "M-x") 
@@ -267,16 +329,16 @@
 (put 'downcase-region 'disabled nil)
 
 
-
-(use-package sr-speedbar
-  :ensure t
-  :config
-  (setq
-   sr-speedbar-width 10
-   speedbar-use-images nil)
-  (when window-system
-    (sr-speedbar-open))
-  )
+;; Disableing as its not working - projectile speedbar is missing files
+;; (use-package sr-speedbar
+;;   :ensure t
+;;   :config
+;;   (setq
+;;    sr-speedbar-width 20
+;;    speedbar-use-images nil)
+;;   ;; (when window-system
+;;   ;;   (sr-speedbar-open))
+;;   )
 
 (use-package windmove
   ;; :defer 4
@@ -289,12 +351,13 @@
   ;;(windmove-default-keybindings 'control)
   ;; wrap around at edges
   (setq windmove-wrap-around t)
-  (general-define-key
-   "<left>" 'windmove-left
-   "<right>" 'windmove-right
-   "<up>" 'windmove-up
-   "<down>" 'windmove-down
-   )
+  ;; disabled for leaning evil mode
+  ;; (general-define-key
+  ;;  "<left>" 'windmove-left
+  ;;  "<right>" 'windmove-right
+  ;;  "<up>" 'windmove-up
+  ;;  "<down>" 'windmove-down
+  ;;  )
   )
 
 ;; Make windmove work in Org mode:
@@ -304,10 +367,6 @@
   (setq org-replace-disputed-keys t)
   (setq org-log-done 'time)
   )
-;; (add-hook 'org-shiftup-final-hook 'windmove-up)
-;; (add-hook 'org-shiftleft-final-hook 'windmove-left)
-;; (add-hook 'org-shiftdown-final-hook 'windmove-down)
-;; (add-hook 'org-shiftright-final-hook 'windmove-right)
 
 (use-package org-bullets
   :ensure t
@@ -315,10 +374,12 @@
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
   )
 
-
-(use-package projectile-speedbar
-  :ensure t
-  )
+;; disableing as its not working (missing files)
+;; (use-package projectile-speedbar
+;;   :ensure t
+;;   :config
+;;   ;;(setq projectile-speedbar-enable nil)
+;;   )
 
 
 (use-package haskell-mode
@@ -326,34 +387,9 @@
   :pin melpa-stable
   )
 
-
-
-(use-package ghc
-  :ensure t
-  ;; :config
-  ;; (autoload 'ghc-init "ghc" nil t)
-  ;; (autoload 'ghc-debug "ghc" nil t)
-  ;; (add-hook 'haskell-mode-hook (lambda () (ghc-init)))
-  )
-
-
  (use-package emamux
    :ensure t
    )
-
-
-;; (start-process
-;;    "unused"
-;;    nil
-;;    "xterm"
-;;    "-e" "tmux" "new-session" "-n" "ghci" "-s" "haskell" "cabal repl"
-;;    )
-;; (setq emamux-ghci:tmux-address "haskell:ghci")
-
-;; not in package library
-;; (use-package emamux-ghci
-;;   :ensure t
-;;    )
 
 
 (use-package whitespace
@@ -393,45 +429,52 @@
   :ensure t
   :pin melpa-stable
   :config
-    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  ;; disabled for leaning evil mode
+  ;; (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 
   )
 
 (use-package yaml-mode
  :ensure t)
 
+;; removed for leaning emacs
+;; (use-package indent-tools
+;;   :ensure t
+;;   :config
+;;   (add-hook 'python-mode-hook
+;; ;; (lambda () (define-key python-mode-map (kbd "C-c >") 'indent-tools-hydra/body))
+;; )
+;;   (add-hook 'yaml-mode-hook
+;;  (lambda () (define-key python-mode-map (kbd "C-c >") 'indent-tools-hydra/body))
+;; )
+;;   )
 
-(use-package indent-tools
-  :ensure t
-  :config
-  (add-hook 'python-mode-hook
- (lambda () (define-key python-mode-map (kbd "C-c >") 'indent-tools-hydra/body))
- )
-  (add-hook 'yaml-mode-hook
- (lambda () (define-key python-mode-map (kbd "C-c >") 'indent-tools-hydra/body))
-)
-  )
 
 (use-package hydra
   :ensure t
   :config
-  (defhydra hydra-zoom (global-map "<f2>")
+  (defhydra hydra-zoom (global-map "<f5>")
   "zoom"
   ("g" text-scale-increase "in")
-  ("l" text-scale-decrease "out")
+  ("l" text-scale-decrease "out"))
+
+  (defhydra hydra-window-move (global-map "<f6>")
+  ("h" windmove-left)
+  ("l" windmove-right)
+  ("j" windmove-down)
+  ("k" windmove-up)
   )
   )
 
 (setq hydra-examples-verbatim t)
 ;;** Example 2: move window splitter
 (when (bound-and-true-p hydra-examples-verbatim)
-  (defhydra hydra-splitter (global-map "C-M-;")
+  (defhydra hydra-splitter (global-map "<f7>")
     "splitter"
     ("h" hydra-move-splitter-left)
     ("j" hydra-move-splitter-down)
     ("k" hydra-move-splitter-up)
     ("l" hydra-move-splitter-right)))
-
 ;;** Example 3: jump to error
 (when (bound-and-true-p hydra-examples-verbatim)
   (defhydra hydra-error (global-map "M-g")
@@ -475,6 +518,13 @@
       (shrink-window arg)
     (enlarge-window arg)))
 
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+  )
+
 
 
 (use-package sql
@@ -515,4 +565,15 @@
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
-(find-file "~/todo.org")
+(setq initial-buffer-choice "~/todo.org")
+
+(tab-new)
+(multi-term)
+(tab-next)
+;;(multi-term-dedicated-open)
+
+(setq tramp-default-method "ssh")
+
+
+
+
