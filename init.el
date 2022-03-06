@@ -241,19 +241,18 @@
 (use-package flycheck
   :ensure t
   :config
-  (add-hook 'elpy-mode-hook 'flycheck-mode)
   )
 
 
 
 
 ;; python ide stuff
-(use-package elpy
-  :ensure t
-  :defer t
-  :init
-  (advice-add 'python-mode :before 'elpy-enable)
-  (elpy-enable)
+;; (use-package elpy
+;;   :ensure t
+;;   :defer t
+;;   :init
+;;   (advice-add 'python-mode :before 'elpy-enable)
+;;   (elpy-enable)
   ;; (defalias 'workon 'pyvenv-workon)
 ;;  :config
   ;; (workon "default")
@@ -266,9 +265,9 @@
   ;;       elpy-disable-backend-error-display nil
   ;;       elpy-rpc-error-timeout 30)
 
-)
+;;)
 
-(setq elpy-rpc-python-command "python3")
+;;(setq elpy-rpc-python-command "python3")
 
 
 
