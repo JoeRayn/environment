@@ -94,6 +94,15 @@
 ;; (use-package bookmark+
 ;;   :ensure t)
 
+(use-package treemacs
+  :ensure t
+  :defer t
+  :config
+  (setq treemacs-width 24)
+  :bind ("C-c t" . treemacs))
+
+
+
 (use-package lsp-mode
   :ensure t
   :config
@@ -101,9 +110,56 @@
     (make-lsp-client :new-connection (lsp-tramp-connection "haskell-language-server-wrapper")
                      :major-modes '(haskell-mode)
                      :remote? t
-                     :server-id 'haskell-language-server)))
+                     :server-id 'haskell-language-server))
+  :commands (lsp lsp-deferred)
+  :hook (python-mode . lsp-deferred))
+
+
 (use-package lsp-ui
-  :ensure t)
+  :ensure t
+  :defer t
+  :config
+  (setq lsp-ui-sideline-enable nil
+	    lsp-ui-doc-delay 2)
+  :bind (:map lsp-ui-mode-map
+	      ("C-c i" . lsp-ui-imenu)))
+
+;; Integration with the debug server 
+(use-package dap-mode
+  :ensure t
+  :defer t
+  :after lsp-mode
+  :config
+  (dap-auto-configure-mode))
+
+; Built-in Python utilities
+(use-package python
+  :ensure t
+  :config
+  ;; Remove guess indent python message
+  (setq python-indent-guess-indent-offset-verbose nil)
+  ;; Use IPython when available or fall back to regular Python 
+  (cond
+   ((executable-find "ipython")
+    (progn
+      (setq python-shell-buffer-name "IPython")
+      (setq python-shell-interpreter "ipython")
+      (setq python-shell-interpreter-args "-i --simple-prompt")))
+   ((executable-find "python3")
+    (setq python-shell-interpreter "python3"))
+   ((executable-find "python2")
+    (setq python-shell-interpreter "python2"))
+   (t
+    (setq python-shell-interpreter "python"))))
+
+;; Language server for Python 
+;; Read the docs for the different variables set in the config.
+(use-package lsp-pyright
+  :ensure t
+  :defer t
+  :config
+  :hook ((python-mode . (lambda () 
+                          (require 'lsp-pyright) (lsp-deferred)))))
 
 (use-package lsp-treemacs
   :ensure t)
@@ -111,14 +167,18 @@
 (use-package helm-lsp
   :ensure t)
 
-
-
 (use-package lsp-haskell
   :ensure t
   :config
   (add-hook 'haskell-mode-hook #'lsp)
   (add-hook 'haskell-literate-mode-hook #'lsp)
   )
+
+(use-package yapfify
+  :ensure t
+  :defer t
+  :hook (python-mode . yapf-mode))
+
 ;;(use-package helm-lsp
 ;;  :ensure t)
 
@@ -162,6 +222,7 @@
 
 (use-package company
   :ensure t
+  
 )
 
 ;; projectile, some kind of project system ( looks at git directories)
@@ -566,8 +627,8 @@
 
 (setq initial-buffer-choice "~/todo.org")
 
-(tab-new)
-(multi-term)
+;;(tab-new)
+;;(multi-term)
 (tab-next)
 ;;(multi-term-dedicated-open)
 
