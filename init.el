@@ -154,6 +154,7 @@
 
 ;; Language server for Python 
 ;; Read the docs for the different variables set in the config.
+;; install seperately
 (use-package lsp-pyright
   :ensure t
   :defer t
@@ -174,10 +175,12 @@
   (add-hook 'haskell-literate-mode-hook #'lsp)
   )
 
+;; requires yapf python package installed
 (use-package yapfify
   :ensure t
   :defer t
-  :hook (python-mode . yapf-mode))
+  ;;:hook (python-mode . yapf-mode) ;; runs format on save
+  )
 
 ;;(use-package helm-lsp
 ;;  :ensure t)
