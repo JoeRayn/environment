@@ -124,7 +124,7 @@
   :bind (:map lsp-ui-mode-map
 	      ("C-c i" . lsp-ui-imenu)))
 
-;; Integration with the debug server 
+;; Integration with the debug server
 (use-package dap-mode
   :ensure t
   :defer t
@@ -138,7 +138,7 @@
   :config
   ;; Remove guess indent python message
   (setq python-indent-guess-indent-offset-verbose nil)
-  ;; Use IPython when available or fall back to regular Python 
+  ;; Use IPython when available or fall back to regular Python
   (cond
    ((executable-find "ipython")
     (progn
@@ -150,16 +150,18 @@
    ((executable-find "python2")
     (setq python-shell-interpreter "python2"))
    (t
-    (setq python-shell-interpreter "python"))))
+    (setq python-shell-interpreter "python")))
+  (add-hook 'python-mode-hook
+                  (add-hook 'before-save-hook 'delete-trailing-whitespace)))
 
-;; Language server for Python 
+;; Language server for Python
 ;; Read the docs for the different variables set in the config.
 ;; install seperately
 (use-package lsp-pyright
   :ensure t
   :defer t
   :config
-  :hook ((python-mode . (lambda () 
+  :hook ((python-mode . (lambda ()
                           (require 'lsp-pyright) (lsp-deferred)))))
 
 (use-package lsp-treemacs
@@ -225,7 +227,7 @@
 
 (use-package company
   :ensure t
-  
+
 )
 
 ;; projectile, some kind of project system ( looks at git directories)
@@ -258,13 +260,13 @@
  )
 
 
-;; scroll one line at a time (less "jumpy" than defaults)    
+;; scroll one line at a time (less "jumpy" than defaults)
     (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
-    
+
     (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
-    
+
     (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
-    
+
     (setq scroll-step 1) ;; keyboard scroll one line at a time
 
 ;;auto code folding
@@ -364,7 +366,7 @@
   ;; (general-define-key
   ;; :prefix "C-c"
   ;; "b"  '(helm-buffers-list :which-key "buffers list")
-  ;; "v" '(flymd-flyit :flymd) 
+  ;; "v" '(flymd-flyit :flymd)
   ;; "l"  'shrink-window-horizontally
   ;; "k" 'backward-kill-line
   ;; "f" 'elpy-format-code
@@ -387,7 +389,7 @@
   )
   )
 
-;;  (global-set-key (kbd "M-x") 
+;;  (global-set-key (kbd "M-x")
 
 (put 'downcase-region 'disabled nil)
 
@@ -636,7 +638,3 @@
 ;;(multi-term-dedicated-open)
 
 (setq tramp-default-method "ssh")
-
-
-
-
