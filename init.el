@@ -56,7 +56,6 @@
   :config
   (evil-collection-init))
 
-
 (use-package key-chord
   :ensure t
   :config
@@ -88,7 +87,22 @@
 (use-package multi-term
   :ensure t
   :init
-  (setq multi-term-program "/usr/bin/zsh"))
+  (setq multi-term-program "/usr/bin/zsh")
+  :config
+  (defun it-multi-term-dedicated-toggle ()
+  "jump back to previous location after toggling ded term off"
+  (interactive)
+  (if (multi-term-dedicated-exist-p)
+      (progn
+        (switch-to-buffer-other-window old-buf)
+        (multi-term-dedicated-toggle))
+    (progn
+      (setq old-buf (current-buffer))
+      (multi-term-dedicated-toggle)
+      (multi-term-dedicated-select))
+    )
+  )
+  )
 
 ;; package does not exist?
 ;; (use-package bookmark+
@@ -101,6 +115,11 @@
   (setq treemacs-width 24)
   :bind ("C-c t" . treemacs))
 
+(use-package treemacs-evil
+  :ensure t)
+
+(use-package treemacs-projectile
+  :ensure t)
 
 
 (use-package lsp-mode
@@ -181,7 +200,13 @@
 (use-package yapfify
   :ensure t
   :defer t
-  ;;:hook (python-mode . yapf-mode) ;; runs format on save
+  :config
+  :hook (python-mode . yapf-mode) ;; runs format on save
+  )
+
+
+(use-package sqlformat
+  :ensure t
   )
 
 ;;(use-package helm-lsp
@@ -250,7 +275,7 @@
  '(helm-minibuffer-history-key "M-p")
  '(inhibit-startup-screen t)
  '(package-selected-packages
-   '(evil-mc malyon helm-company multiple-cursors helm-lsp helm-sql-connect lsp-docker lsp-haskell lsp-ui lsp-mode multi-term elm-mode helm-dash dash-docs magit ox-reveal helm-ag emamux-ghci- emamux-ghci ghc yaml-mode helm-projectile general hydra indent-tools helm-swoop emamux haskell-mode projectile-speedbar sr-speedbar snakemake-mode dockerfile-mode ein transpose-frame py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))
+   '(sqlformat evil-surround groovy-mode evil-mc malyon helm-company multiple-cursors helm-lsp helm-sql-connect lsp-docker lsp-haskell lsp-ui lsp-mode multi-term elm-mode helm-dash dash-docs magit ox-reveal helm-ag emamux-ghci- emamux-ghci ghc yaml-mode helm-projectile general hydra indent-tools helm-swoop emamux haskell-mode projectile-speedbar sr-speedbar snakemake-mode dockerfile-mode ein transpose-frame py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))
  '(session-use-package t nil (session)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -373,6 +398,47 @@
   ;; "C-z" 'elpy-shell-switch-to-shell
   ;; "c" 'mc/edit-lines
   ;;)
+  (general-create-definer my-leader-def
+  ;; :prefix my-leader
+  :prefix "SPC")
+
+  (general-create-definer my-local-leader-def
+  ;; :prefix my-local-leader
+  :prefix "SPC SPC")
+
+  (general-define-key
+   :states 'motion
+  ;; Make evil-mode up/down operate in screen lines instead of logical lines
+   "k" 'evil-previous-visual-line
+   "j" 'evil-next-visual-line
+   )
+
+  (my-leader-def
+  :states 'normal
+  :keymaps 'override
+  "a" 'org-agenda
+  "t" 'it-multi-term-dedicated-toggle
+  "s" 'helm-swoop
+  "f" 'helm-find-files
+  "b" 'helm-mini
+  "p" 'helm-projectile
+  "k" 'kill-buffer
+  "B" 'list-buffer
+  "o" 'other-window
+  "1" 'delete-other-windows
+  "2" 'split-window-below
+  "3" 'split-window-right
+  )
+
+  (my-local-leader-def
+    :states 'normal
+    :keymaps 'emacs-lisp-mode-map
+    "e" 'eval-buffer)
+
+  ;; (my-local-leader-def
+  ;;   :states 'normal
+
+
   (general-define-key
   "M-x" 'helm-M-x
   "C-x b" '(helm-buffers-list :which-key "buffers list")
@@ -388,6 +454,7 @@
   ;;  "<f12>" 'flyspell-auto-correct-previous-word
   )
   )
+
 
 ;;  (global-set-key (kbd "M-x")
 

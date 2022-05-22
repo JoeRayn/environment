@@ -100,7 +100,9 @@ source $ZSH/oh-my-zsh.sh
 alias condaActivate="eval $(${HOME}/anaconda3/bin/conda shell.zsh hook)"
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+alias please=sudo
 [ -f "/home/jrayner/.ghcup/env" ] && source "/home/jrayner/.ghcup/env" # ghcup-env
+
 
 #function to make dir and enter it, stolen from stack overflow
 mkcd () {
@@ -114,4 +116,9 @@ mkcd () {
   esac
 }
 
+function awsAuth() {
+    eval $(${HOME}/.aws/tmpCreds.sh $1)
+    }
+
 ssh-agent
+export BETTER_EXCEPTIONS=1
