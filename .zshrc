@@ -101,8 +101,9 @@ alias condaActivate="eval $(${HOME}/anaconda3/bin/conda shell.zsh hook)"
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias please=sudo
-[ -f "/home/jrayner/.ghcup/env" ] && source "/home/jrayner/.ghcup/env" # ghcup-env
 
+alias python=python3
+[ -f "/home/jrayner/.ghcup/env" ] && source "/home/jrayner/.ghcup/env" # ghcup-env
 
 #function to make dir and enter it, stolen from stack overflow
 mkcd () {
@@ -122,3 +123,16 @@ function awsAuth() {
 
 ssh-agent
 export BETTER_EXCEPTIONS=1
+
+#needed for vterm in emacs
+vterm_printf(){
+    if [ -n "$TMUX" ] && ([ "${TERM%%-*}" = "tmux" ] || [ "${TERM%%-*}" = "screen" ] ); then
+        # Tell tmux to pass the escape sequences through
+        printf "\ePtmux;\e\e]%s\007\e\\" "$1"
+    elif [ "${TERM%%-*}" = "screen" ]; then
+        # GNU screen (screen, screen-256color, screen-256color-bce)
+        printf "\eP\e]%s\007\e\\" "$1"
+    else
+        printf "\e]%s\e\\" "$1"
+    fi
+}

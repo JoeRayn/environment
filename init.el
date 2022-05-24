@@ -149,7 +149,11 @@
   :defer t
   :after lsp-mode
   :config
-  (dap-auto-configure-mode))
+  (dap-auto-configure-mode)
+  :hook
+  (dap-stopped-hook .
+            (lambda (arg) (call-interactively #'dap-hydra)))
+  )
 
 ; Built-in Python utilities
 (use-package python
@@ -200,8 +204,8 @@
 (use-package yapfify
   :ensure t
   :defer t
-  :config
-  :hook (python-mode . yapf-mode) ;; runs format on save
+;;  :config
+  ;; :hook (python-mode . yapf-mode) ;; runs format on save
   )
 
 
@@ -425,9 +429,15 @@
   "k" 'kill-buffer
   "B" 'list-buffer
   "o" 'other-window
+  "0" 'delete-window
   "1" 'delete-other-windows
   "2" 'split-window-below
   "3" 'split-window-right
+  "c" 'comment-region
+  "u" 'uncomment-region
+  "P" 'helm-projectile-project-switch
+  "g" 'magit-status
+  "x" 'helm-M-x
   )
 
   (my-local-leader-def
@@ -446,7 +456,7 @@
   "C-x r b" 'helm-filtered-bookmarks
   "<f8>" 'tab-next
   "<f9>" 'other-window
-  "<f12>" 'save-buffer
+  "<f5>" 'save-buffer
   ;;  "C-c +" 'text-scale-increase
   ;;  "C-c -" 'text-scale-decrease
   ;;  "M-g M-f" 'first-error
@@ -585,12 +595,13 @@
 (use-package hydra
   :ensure t
   :config
-  (defhydra hydra-zoom (global-map "<f5>")
+
+  (defhydra hydra-zoom (global-map "<f6>")
   "zoom"
   ("g" text-scale-increase "in")
   ("l" text-scale-decrease "out"))
 
-  (defhydra hydra-window-move (global-map "<f6>")
+  (defhydra hydra-window-move (global-map "<S-f1>")
   ("h" windmove-left)
   ("l" windmove-right)
   ("j" windmove-down)
