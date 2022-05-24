@@ -104,6 +104,11 @@
   )
   )
 
+(use-package vterm
+  :ensure t)
+
+(use-package multi-vterm
+  :ensure t)
 ;; package does not exist?
 ;; (use-package bookmark+
 ;;   :ensure t)
@@ -421,7 +426,7 @@
   :states 'normal
   :keymaps 'override
   "a" 'org-agenda
-  "t" 'it-multi-term-dedicated-toggle
+  "t" 'multi-vterm-dedicated-toggle
   "s" 'helm-swoop
   "f" 'helm-find-files
   "b" 'helm-mini
