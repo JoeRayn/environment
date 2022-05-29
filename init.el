@@ -11,6 +11,7 @@
 (setq-default indent-tabs-mode nil)
 (horizontal-scroll-bar-mode t)
 (savehist-mode 1)
+(setq debug-on-error t)
 
 ;;Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell! Disable the bell!
 (setq visible-bell 1)
@@ -135,6 +136,7 @@
                      :major-modes '(haskell-mode)
                      :remote? t
                      :server-id 'haskell-language-server))
+  (setq lsp-disabled-clients '(pyright))
   :commands (lsp lsp-deferred)
   :hook (python-mode . lsp-deferred))
 
@@ -153,14 +155,23 @@
   :ensure t
   :defer t
   :after lsp-mode
+  :hook ((python-mode . dap-ui-mode) (python-mode . dap-mode))
   :config
   (dap-auto-configure-mode)
-  :hook
-  (dap-stopped-hook .
+  (require 'dap-python)
+  (dap-register-debug-template "My App"
+    (list :type "python"
+            :args '("--name" "joe")
+            :cwd nil
+            :env '(("DEBUG" . "1"))
+            :target-module (expand-file-name "~/src/test_debug/debug.py")
+            :request "launch"
+            :name "test"))
+  (add-hook 'dap-stopped-hook
             (lambda (arg) (call-interactively #'dap-hydra)))
   )
 
-(require 'dap-python)
+
 
 ; Built-in Python utilities
 (use-package python
@@ -168,31 +179,38 @@
   :config
   ;; Remove guess indent python message
   (setq python-indent-guess-indent-offset-verbose nil)
+  (setq python-shell-interpreter "python3")
+  ;; Disabled when getting dap to work
   ;; Use IPython when available or fall back to regular Python
-  (cond
-   ((executable-find "ipython")
-    (progn
-      (setq python-shell-buffer-name "IPython")
-      (setq python-shell-interpreter "ipython")
-      (setq python-shell-interpreter-args "-i --simple-prompt")))
-   ((executable-find "python3")
-    (setq python-shell-interpreter "python3"))
-   ((executable-find "python2")
-    (setq python-shell-interpreter "python2"))
-   (t
-    (setq python-shell-interpreter "python")))
-  (add-hook 'python-mode-hook
-                  (add-hook 'before-save-hook 'delete-trailing-whitespace)))
+  ;; (cond
+  ;;  ((executable-find "ipython")
+  ;;   (progn
+  ;;     (setq python-shell-buffer-name "IPython")
+  ;;     (setq python-shell-interpreter "ipython")
+  ;;     (setq python-shell-interpreter-args "-i --simple-prompt")))
+  ;;  ((executable-find "python3")
+  ;;   (setq python-shell-interpreter "python3"))
+  ;;  ((executable-find "python2")
+  ;;   (setq python-shell-interpreter "python2"))
+  ;;  (t
+  ;;   (setq python-shell-interpreter "python")))
+  ;; (add-hook 'python-mode-hook
+  ;;           (add-hook 'before-save-hook 'delete-trailing-whitespace))
+  :custom
+  (dap-python-debugger 'debugpy)
+  (dap-python-executable "python3")
+  )
 
 ;; Language server for Python
 ;; Read the docs for the different variables set in the config.
 ;; install seperately
-(use-package lsp-pyright
-  :ensure t
-  :defer t
-  :config
-  :hook ((python-mode . (lambda ()
-                          (require 'lsp-pyright) (lsp-deferred)))))
+;; pyright does not seem to have debugger support so switched to pylsp
+;; (use-package lsp-pyright
+;;   :ensure t
+;;   :defer t
+;;   :config
+;;   :hook ((python-mode . (lambda ()
+;;                           (require 'lsp-pyright) (lsp-deferred)))))
 
 (use-package lsp-treemacs
   :ensure t)
