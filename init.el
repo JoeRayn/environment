@@ -137,8 +137,10 @@
                      :remote? t
                      :server-id 'haskell-language-server))
   (setq lsp-disabled-clients '(pyright))
-  :commands (lsp lsp-deferred)
-  :hook (python-mode . lsp-deferred))
+  ;; temp disable while fixing pylsp install 20.12.2022
+  ;;:commands (lsp lsp-deferred)
+  ;;:hook (python-mode . lsp-deferred)
+  )
 
 
 (use-package lsp-ui
@@ -159,14 +161,14 @@
   :config
   (dap-auto-configure-mode)
   (require 'dap-python)
-  (dap-register-debug-template "My App"
+  (dap-register-debug-template "Aion"
     (list :type "python"
-            :args '("--name" "joe")
+            :args nil 
             :cwd nil
             :env '(("DEBUG" . "1"))
-            :target-module (expand-file-name "~/src/test_debug/debug.py")
-            :request "launch"
-            :name "test"))
+            :target-module (expand-file-name "~/src/rd-aion-wrapper/quality_module/test_end2end.py")
+            :request "attatch"
+            :name "docker"))
   (add-hook 'dap-stopped-hook
             (lambda (arg) (call-interactively #'dap-hydra)))
   )
@@ -304,7 +306,7 @@
  '(helm-minibuffer-history-key "M-p")
  '(inhibit-startup-screen t)
  '(package-selected-packages
-   '(dap-python sqlformat evil-surround groovy-mode evil-mc malyon helm-company multiple-cursors helm-lsp helm-sql-connect lsp-docker lsp-haskell lsp-ui lsp-mode multi-term elm-mode helm-dash dash-docs magit ox-reveal helm-ag emamux-ghci- emamux-ghci ghc yaml-mode helm-projectile general hydra indent-tools helm-swoop emamux haskell-mode projectile-speedbar sr-speedbar snakemake-mode dockerfile-mode ein transpose-frame py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))
+   '(groovy-imports dap-python sqlformat evil-surround groovy-mode evil-mc malyon helm-company multiple-cursors helm-lsp helm-sql-connect lsp-docker lsp-haskell lsp-ui lsp-mode multi-term elm-mode helm-dash dash-docs magit ox-reveal helm-ag emamux-ghci- emamux-ghci ghc yaml-mode helm-projectile general hydra indent-tools helm-swoop emamux haskell-mode projectile-speedbar sr-speedbar snakemake-mode dockerfile-mode ein transpose-frame py-autopep8 elpy flycheck which-key use-package projectile helm doom-themes))
  '(session-use-package t nil (session)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

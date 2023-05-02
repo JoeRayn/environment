@@ -102,6 +102,11 @@ alias condaActivate="eval $(${HOME}/anaconda3/bin/conda shell.zsh hook)"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias please=sudo
 
+alias dkr=docker
+
+alias ssh-clean="find $HOME/.ssh/ -name 'master-*' | xargs rm "
+
+alias d-c="docker compose"
 alias python=python3
 [ -f "/home/jrayner/.ghcup/env" ] && source "/home/jrayner/.ghcup/env" # ghcup-env
 
@@ -123,7 +128,7 @@ function awsAuth() {
 
 ssh-agent
 export BETTER_EXCEPTIONS=1
-
+export AION_DEBUG="FALSE"
 #needed for vterm in emacs
 vterm_printf(){
     if [ -n "$TMUX" ] && ([ "${TERM%%-*}" = "tmux" ] || [ "${TERM%%-*}" = "screen" ] ); then
@@ -136,3 +141,7 @@ vterm_printf(){
         printf "\e]%s\e\\" "$1"
     fi
 }
+
+
+# nostos commands
+alias devdb=psql -U postgres -h aion-be-dev.c5mhdtagup4v.eu-central-1.rds.amazonaws.com -d nostos-stage
